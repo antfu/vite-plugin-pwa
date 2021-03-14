@@ -3,7 +3,6 @@ import { resolve } from 'path'
 import { ResolvedConfig } from 'vite'
 import { GenerateSWConfig, InjectManifestConfig } from 'workbox-build'
 import { ManifestOptions, VitePWAOptions, ResolvedVitePWAOptions } from './types'
-import { cachePreset } from './cache'
 
 export function resolveBathPath(base: string) {
   if (isAbsolute(base))
@@ -29,7 +28,8 @@ export function resolveOptions(options: Partial<VitePWAOptions>, viteConfig: Res
     mode = (process['env']['NODE_ENV'] || 'production') as ('production' | 'development'),
     srcDir = 'public',
     outDir = viteConfig.build.outDir || 'dist',
-    injectRegister = 'import',
+    injectRegister = 'auto',
+    registerType = 'prompt',
     filename = 'sw.js',
     strategies = 'generateSW',
     minify = true,
@@ -46,7 +46,7 @@ export function resolveOptions(options: Partial<VitePWAOptions>, viteConfig: Res
     swDest,
     globDirectory: outDirRoot,
     offlineGoogleAnalytics: false,
-    runtimeCaching: cachePreset,
+    cleanupOutdatedCaches: true,
     mode,
     navigateFallback: 'index.html',
   }
@@ -72,6 +72,11 @@ export function resolveOptions(options: Partial<VitePWAOptions>, viteConfig: Res
   const manifest = Object.assign({}, defaultManifest, options.manifest || {})
   const injectManifest = Object.assign({}, defaultInjectManifest, options.injectManifest || {})
 
+  if (injectRegister === 'auto' && registerType === 'autoUpdate') {
+    workbox.skipWaiting = true
+    workbox.clientsClaim = true
+  }
+
   return {
     base: basePath,
     mode,
@@ -79,6 +84,7 @@ export function resolveOptions(options: Partial<VitePWAOptions>, viteConfig: Res
     srcDir,
     outDir,
     injectRegister,
+    registerType,
     filename,
     strategies,
     workbox,

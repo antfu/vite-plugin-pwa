@@ -7,11 +7,12 @@
     "strict": true,
     "strictNullChecks": true,
     "moduleResolution": "Node",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noUnusedLocals": true
   },
   "exclude": [
-    "**/dist",
-    "**/node_modules",
-    "**/test"
+    "dist",
+    "node_modules",
+    "test"
   ]
 }

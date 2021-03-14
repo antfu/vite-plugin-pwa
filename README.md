@@ -14,8 +14,9 @@
 
 - Generate Service Worker with Offline support (via [Workbox](https://developers.google.com/web/tools/workbox))
 - Auto inject Web App [Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest)
-- **WIP**: Strategies option
-- **WIP**: Meta injection
+- Prompt for new content refreshing 
+- Automatic reload when new content available 
+- **WIP**: Network first strategy
 - **WIP**: Icons generation for different dimensions
 
 ## Usage
@@ -53,6 +54,70 @@ VitePWA({
   }
 })
 ```
+
+### Prompt for new content 
+
+![](https://user-images.githubusercontent.com/11247099/110332062-d726fa80-805a-11eb-92f4-771499241350.png)
+
+```ts
+// main.ts
+import { registerSW } from '@virtual/pwa-register'
+
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // show a prompt to user
+  },
+  onOfflineReady() {
+    // ...
+  },
+})
+```
+
+```ts
+// when user clicked the "refresh" button
+updateSW()
+// the page will reload and the up-to-date content will be served.
+```
+
+You can find an example written in Vue 3: [ReloadPrompt.vue](./example/src/ReloadPrompt.vue).
+
+You can run the example using `pnpm run example:router:start`.
+
+### Automatic reload when new content available
+
+With this option, once the service worker detects new content available, then it will update caches and 
+will reload all browser windows/tabs with the application opened automatically to take the control.
+
+The downside using this option is that the user can lost data on other browser windows/tabs opened if filling a form.
+
+#### Configuration
+
+With this option, the plugin will force `workbox.clientsClaim` and `workbox.skipWaiting` to `true`.
+
+```ts
+VitePWA({
+  registerType: 'autoUpdate',  
+  manifest: {
+    // content of manifest
+  },
+  workbox: {
+    // workbox options for generateSW
+  }
+})
+```
+
+#### Runtime
+
+```ts
+// main.ts
+import { registerSW } from '@virtual/pwa-register'
+
+registerSW()
+```
+
+You can run the example using `pnpm run example:router:start:claims`.
+
+### **WIP**: Network first strategy
 
 ### **WIP**: Advanced (injectManifest)
 

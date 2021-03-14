@@ -36,9 +36,23 @@ export interface VitePWAOptions {
   /**
    * Inject the service worker register inlined in the index.html
    *
-   * @default 'import'
+   * With `auto` set, depends on whether you used the `import { registerSW } from 'virtual:pwa-register'`
+   * it will do nothing or use the `import` mode
+   *
+   * @default 'auto'
    */
-  injectRegister: 'inline' | 'import' | null | false
+  injectRegister: 'inline' | 'import' | 'auto' | 'networkfirst' | null | false
+  /**
+   * When `injectRegister` is `auto`, how interact with the user on new content found?
+   *
+   * Only with `prompt` you will need to show a popup/dialog to the user to confirm.
+   *
+   * With `autoUpdate`, the service worker will update caches and reload all browser windows/tabs with the application
+   * opened automatically to take the control when new content is available.
+   *
+   * @default 'autoUpdate'
+   */
+  registerType?: 'prompt' | 'autoUpdate'
   /**
    * Minify the generated manifest
    *
