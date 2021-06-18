@@ -17,6 +17,7 @@
 - Prompt for new content refreshing 
 - Automatic reload when new content available
 - Advanced (injectManifest)  
+- Network first strategy
 - Static assets handling
 
 ## Usage
@@ -195,6 +196,78 @@ To resolve service worker types, just add `WebWorker` to lib entry on your `tsco
 "lib": ["ESNext", "DOM", "WebWorker"],
 ```
 
+### Network first strategy
+
+We have created a service worker to be used with `network first strategy`, and so you don't need to create it using
+`injectManifest`. 
+
+There are 2 available cache strategies:
+- `Network First Cache Strategy`
+- [Custom Cache Network Race Strategy](https://developers.google.com/web/tools/workbox/modules/workbox-strategies#custom_cache_network_race_strategy)
+
+By default, the service worker will use `Network First Cache Strategy`.
+
+You can see an explanation for `Custom Cache Network Race Strategy` [here](https://jakearchibald.com/2014/offline-cookbook/#cache--network-race).
+
+You can find an example written for a Vue 3 [here](./examples/vue-networkfirst).
+
+#### Configuration
+
+```ts
+VitePWA({
+  strategies: 'networkFirst',
+  networkFirst: { /* options */ },  
+  manifest: {
+    // content of manifest
+  }
+})
+```
+
+To configure `Custom Cache Network Race Strategy` instead `Network First Cache Strategy`:
+```ts
+VitePWA({
+  strategies: 'networkFirst',
+  networkFirst: { raceStrategy: true, /* other options */ },
+  manifest: {
+    // content of manifest
+  }
+})
+```
+
+#### Runtime
+
+This will be only necessary when you need to notify the user that your application is `ready to work offline`.
+
+**Warning**: in order for the service worker to be registered, you must invoke the` registerSW`
+method from the `virtual:pwa-register` module if you are using it.
+
+```ts
+// main.ts
+import { registerSW } from 'virtual:pwa-register'
+
+const updateSW = registerSW({
+  onOfflineReady() {
+    // show a ready to work offline to user
+  },
+})
+```
+
+#### SSR/SSG
+
+If you are using `SSR/SSG`, you need to import `virtual:pwa-register` module using dynamic import and checking if
+`window` is not `undefined`:
+
+```ts
+// pwa.ts
+import { registerSW } from 'virtual:pwa-register'
+registerSW({ /* options */})
+
+// main.ts
+if (typeof window !== 'undefined') {
+    import('./pwa')
+}
+```
+
 ### Static assets handling
 
 By default, all icons on `PWA Manifest` option found under Vite's `publicDir` option directory, will be included 
@@ -217,7 +290,7 @@ VitePWA({
     globPatterns: [],
     // ...
   },
-  // or for injectManifest strategy
+  // or for injectManifest/networkFirst strategies
   injectManifest: {
     globPatterns: [],
     // ...

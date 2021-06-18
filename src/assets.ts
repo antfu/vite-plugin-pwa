@@ -52,7 +52,7 @@ export async function configureStaticAssets(
     includeManifestIcons,
   } = resolvedVitePWAOptions
 
-  const useInjectManifest = strategies === 'injectManifest'
+  const useInjectManifest = strategies === 'injectManifest' || strategies === 'networkFirst'
   const { publicDir } = viteConfig
   const globs: string[] = []
   const manifestEntries: ManifestEntry[] = lookupAdditionalManifestEntries(

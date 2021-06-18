@@ -34,7 +34,11 @@
     "example:router:start:claims": "npm -C examples/vue-router run start-claims",
     "example:dev:cdn": "npm -C examples/vue-basic-cdn run dev",
     "example:build:cdn": "npm -C examples/vue-basic-cdn run build",
-    "example:start:cdn": "npm -C examples/vue-basic-cdn run start"
+    "example:start:cdn": "npm -C examples/vue-basic-cdn run start",
+    "example:build:networkfirst:race": "npm -C examples/vue-networkfirst run build-race",
+    "example:start:networkfirst:race": "npm -C examples/vue-networkfirst run start-race",
+    "example:build:networkfirst:no-race": "npm -C examples/vue-networkfirst run build-no-race",
+    "example:start:networkfirst:no-race": "npm -C examples/vue-networkfirst run start-no-race"
   },
   "peerDependencies": {
     "vite": "^2.0.0"
@@ -45,6 +49,9 @@
     "pretty-bytes": "^5.6.0",
     "rollup": "^2.51.2",
     "workbox-build": "^6.1.5",
+    "workbox-core": "^6.1.5",
+    "workbox-routing": "^6.1.5",
+    "workbox-strategies": "^6.1.5",
     "workbox-window": "^6.1.5"
   },
   "devDependencies": {

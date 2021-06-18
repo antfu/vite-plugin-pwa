@@ -3,7 +3,7 @@ import { existsSync } from 'fs'
 import type { Plugin, ResolvedConfig } from 'vite'
 import { generateSW } from 'workbox-build'
 import { generateSimpleSWRegister, injectServiceWorker } from './html'
-import { generateInjectManifest, generateRegisterSW } from './modules'
+import { generateInjectManifest, generateRegisterSW, generateNetworkFirstWS } from './modules'
 import { ResolvedVitePWAOptions, VitePWAOptions } from './types'
 import { resolveOptions } from './options'
 import { generateWebManifestFile } from './assets'
@@ -41,7 +41,7 @@ export function VitePWA(userOptions: Partial<VitePWAOptions> = {}): Plugin[] {
         }
 
         // if virtual register is requested, do not inject.
-        if (options.injectRegister === 'auto')
+        if (options.injectRegister === 'auto' || options.strategies === 'networkFirst')
           options.injectRegister = useImportRegister ? null : 'script'
 
         if (options.injectRegister === 'script' && !existsSync(resolve(viteConfig.publicDir, FILE_SW_REGISTER))) {
@@ -58,6 +58,8 @@ export function VitePWA(userOptions: Partial<VitePWAOptions> = {}): Plugin[] {
         if (!viteConfig.build.ssr) {
           if (options.strategies === 'injectManifest')
             await generateInjectManifest(options, viteConfig)
+          else if (options.strategies === 'networkFirst')
+            await generateNetworkFirstWS(options, viteConfig)
           else
             await generateSW(options.workbox)
         }

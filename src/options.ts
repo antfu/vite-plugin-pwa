@@ -36,10 +36,12 @@ export async function resolveOptions(options: Partial<VitePWAOptions>, viteConfi
     ? JSON.parse(fs.readFileSync('package.json', 'utf-8'))
     : {}
 
+  // prevent tsup replacing `process.env`
+  // eslint-disable-next-line dot-notation
+  const processMode = (process['env']['NODE_ENV'] || 'production') as ('production' | 'development')
+
   const {
-    // prevent tsup replacing `process.env`
-    // eslint-disable-next-line dot-notation
-    mode = (process['env']['NODE_ENV'] || 'production') as ('production' | 'development'),
+    mode = processMode,
     srcDir = 'public',
     outDir = viteConfig.build.outDir || 'dist',
     injectRegister = 'auto',
@@ -50,6 +52,11 @@ export async function resolveOptions(options: Partial<VitePWAOptions>, viteConfi
     base = viteConfig.base,
     includeAssets = undefined,
     includeManifestIcons = true,
+    networkFirst = {
+      raceStrategy: true,
+      debug: processMode !== 'production',
+      credentials: 'same-origin',
+    },
   } = options
 
   const basePath = resolveBathPath(base)
@@ -119,6 +126,7 @@ export async function resolveOptions(options: Partial<VitePWAOptions>, viteConfi
     minify,
     includeAssets,
     includeManifestIcons,
+    networkFirst,
   }
 
   await configureStaticAssets(resolvedVitePWAOptions, viteConfig)

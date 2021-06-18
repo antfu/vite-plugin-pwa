@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "npm run run-build && npm run serve",
+    "start-networkfirst": "npm run run-build-networkfirst && npm run serve",
     "dev": "cross-env DEBUG=vite-plugin-pwa:* vite",
     "build": "cross-env DEBUG=vite-plugin-pwa:* vite build",
     "run-build": "cross-env DEBUG=vite-plugin-pwa:* BASE_URL=/ SOURCE_MAP=true vite build",

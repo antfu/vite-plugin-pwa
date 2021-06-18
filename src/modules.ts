@@ -15,6 +15,32 @@ export async function generateRegisterSW(options: ResolvedVitePWAOptions, mode: 
     .replace('__SW__', sw)
     .replace('__SCOPE__', scope)
     .replace('__SW_AUTO_UPDATE__', `${options.registerType === 'autoUpdate'}`)
+    .replace('__SW_NETWORK_FIRST__', `${options.strategies === 'networkFirst'}`)
+}
+
+export async function generateNetworkFirstWS(options: ResolvedVitePWAOptions, viteOptions: ResolvedConfig) {
+  const {
+    raceStrategy = false,
+    debug = false,
+    credentials = 'same-origin',
+    networkTimeoutSeconds = 0,
+  } = options.networkFirst
+
+  const content = await fs.readFile(resolve(__dirname, 'client/workbox-recipes/network-first.mjs'), 'utf-8')
+
+  const result = content
+    .replace('__SW_DEBUG__', `${debug}`)
+    .replace('__SW_RACE__', `${raceStrategy}`)
+    .replace('__SW_CREDENTIALS__', credentials)
+    .replace('__SW_TIMEOUT__', `${networkTimeoutSeconds}`)
+    .replace('__SW_FALLBACK__', options.workbox.navigateFallback || 'index.html')
+
+  const swDest = resolve(options.swDest)
+  await fs.writeFile(swDest, result, {
+    encoding: 'utf-8',
+  })
+  options.swSrc = options.swDest
+  await generateInjectManifest(options, viteOptions)
 }
 
 export async function generateInjectManifest(options: ResolvedVitePWAOptions, viteOptions: ResolvedConfig) {

@@ -1,3 +1,4 @@
+// @ts-ignore
 import { msg, mode } from './workerImport'
 
 let counter = 1
